@@ -65,8 +65,9 @@ public class WebIntent extends CordovaPlugin {
                         extrasMap.put(key, value);
                     }
                 }
+                String packagename = obj.has("package") ? obj.getString("package") : null;
 
-                startActivity(obj.getString("action"), uri, type, extrasMap);
+                startActivity(obj.getString("action"), uri, type, extrasMap, packagename);
                 callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
                 return true;
             } else if ("hasExtra".equals(action)) {
@@ -165,9 +166,11 @@ public class WebIntent extends CordovaPlugin {
         }
     }
 
-    void startActivity(String action, Uri uri, String type, Map<String, String> extras) {
+    void startActivity(String action, Uri uri, String type, Map<String, String> extras, String packagename) {
         Intent i = uri != null ? new Intent(action, uri) : new Intent(action);
-
+        if(packagename != null){
+            i.setPackage(packagename);
+        }
         if (type != null && uri != null) {
             i.setDataAndType(uri, type); //Fix the crash problem with android 2.3.6
         } else {
